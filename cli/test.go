@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	scraper "github.com/cardigann/go-cloudflare-scraper"
+	scraper "github.com/zoh/go-cloudflare-scraper"
 )
 
 func makeRequest(c *http.Client, url string) {

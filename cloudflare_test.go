@@ -29,6 +29,10 @@ func TestTransport(t *testing.T) {
 		Transport: scraper,
 	}
 
+	// must be
+	// https://socket.bittrex.com/cdn-cgi/l/chk_jschl?
+	// jschl_vc=5530cb027b54af31d8771d96f7b93817&pass=1523904262.081-6A4JAY%2B1KA&jschl_answer=22.5755820428
+
 	res, err := c.Get(ts.URL)
 	if err != nil {
 		t.Fatal(err)

@@ -89,7 +89,9 @@ func (t Transport) solveChallenge(resp *http.Response) (*http.Response, error) {
 		return nil, err
 	}
 
-	params.Set("jschl_answer", strconv.Itoa(int(answer)+len(resp.Request.URL.Host)))
+	// fmt.Println("answer", answer, resp.Request.URL.Host)
+
+	params.Set("jschl_answer", strconv.FormatFloat((answer)+ float64(len(resp.Request.URL.Host)),'f', -1, 64) )
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s?%s", u.String(), params.Encode()), nil)
 	if err != nil {
@@ -113,20 +115,22 @@ func (t Transport) solveChallenge(resp *http.Response) (*http.Response, error) {
 	return resp, nil
 }
 
-func (t Transport) evaluateJS(js string) (int64, error) {
+func (t Transport) evaluateJS(js string) (float64, error) {
 	vm := otto.New()
 	result, err := vm.Run(js)
 	if err != nil {
 		return 0, err
 	}
-	return result.ToInteger()
+	return result.ToFloat()
 }
 
 var jsRegexp = regexp.MustCompile(
 	`setTimeout\(function\(\){\s+(var ` +
 		`s,t,o,p,b,r,e,a,k,i,n,g,f.+?\r?\n[\s\S]+?a\.value =.+?)\r?\n`,
 )
-var jsReplace1Regexp = regexp.MustCompile(`a\.value = (parseInt\(.+?\)).+`)
+
+var jsReplace1Regexp = regexp.MustCompile(`a\.value = (\+(.+)\.toFixed\(10\)).+`)
+// var jsReplace1Regexp = regexp.MustCompile(`a\.value = (parseInt\(.+?\)).+`)
 var jsReplace2Regexp = regexp.MustCompile(`\s{3,}[a-z](?: = |\.).+`)
 var jsReplace3Regexp = regexp.MustCompile(`[\n\\']`)
 
